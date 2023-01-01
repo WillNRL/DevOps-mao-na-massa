@@ -7,4 +7,4 @@ yum upgrade
 echo "Installing apache and setting in up"
 yum install -y httpd
 cp -r /vagrant/html* /var/www/html/
-service httpd start
+systemctl start httpd.service
