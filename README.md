@@ -1,2 +1,5 @@
 # DevOps-mao-na-massa
-#### exec: ```vagrant up```
+exec:
+```
+vagrant up
+```
