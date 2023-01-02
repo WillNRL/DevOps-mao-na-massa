@@ -10,7 +10,7 @@ sudo yum -y install python3
 sudo python3 -m pip -V
 sudo python3 -m pip install --user ansible
 #https://github.com/facebook/prophet/issues/418
-#Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-build-BqMhb7/matplotlib/ #418
+#ERRO --> Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-build-BqMhb7/matplotlib/ #418
 cat <<EOT >> /etc/hosts
 192.168.1.2 control-node
 192.168.1.3 app01
