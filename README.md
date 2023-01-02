@@ -1,4 +1,18 @@
 # DevOps-mao-na-massa
+
+#### Config do vbox network
+```
+/etc/vbox/networks.conf
+
+No Linux, macOS e Solaris, o Oracle VM VirtualBox permitirá apenas que endereços IP no intervalo 192.168.56.0/21 sejam atribuídos a adaptadores somente de host. Para IPv6, apenas endereços locais de link são permitidos. Se outros intervalos forem desejados, eles podem ser habilitados criando /etc/vbox/networks.conf e especificando os intervalos permitidos lá. Por exemplo, para permitir os intervalos IPv4 10.0.0.0/8 e 192.168.0.0/16, bem como o intervalo 2001::/64, coloque as seguintes linhas em /etc/vbox/networks.conf:
+
+       * 10.0.0.0/8 192.168.0.0/16
+       * 2001::/64
+      
+As linhas que começam com o hash # são ignoradas. O exemplo a seguir permite quaisquer endereços, desativando efetivamente o controle de alcance:
+
+       * 0.0.0.0/0 ::/0
+```
 #### Help do Vagrant
 ```
 Usage: vagrant [options] <command> [<args>]
