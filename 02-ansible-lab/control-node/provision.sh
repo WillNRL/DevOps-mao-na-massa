@@ -3,8 +3,8 @@ echo "Inicio da instalacao do ansible"
 sudo apt-get install -y python3 pip curl wget
 echo "alias python='python3'" >> .bashrc
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-sudo python3 get-pip.py --user
-sudo python3 -m pip install --user ansible
+python3 get-pip.py --user
+python3 -m pip install --user ansible
 cat <<EOT >> /etc/hosts
 192.168.1.2 control-node
 192.168.1.3 app01
