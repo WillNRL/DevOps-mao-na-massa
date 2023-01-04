@@ -14,6 +14,12 @@ As linhas que começam com o hash # são ignoradas. O exemplo a seguir permite q
        * 0.0.0.0/0 ::/0
 ```
 #### Help do Vagrant
+##### Dicas
+- _vagrant up_ para subir a VM
+- _vagrant halt_ para pausar a VM
+- _vagrant provision_ para provisionar no metodo que escolher
+- vagrant suspend para suspender a VM
+- Maior dica de todas: Use _vagrant suspend_ em vez de _halt_, porque o *suspend salva o estado da VM*. Depois de suspender a VM, a VM sobe mais rapido no vagrant up do que os _halt_.
 ```
 Usage: vagrant [options] <command> [<args>]
 
