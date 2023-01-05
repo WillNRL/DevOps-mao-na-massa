@@ -20,3 +20,35 @@
         - 192.168.1.2 control-node
         - 192.168.1.3 app01
         - 192.168.1.4 db01
+    - name: Add user de app
+      user:
+        name: app
+        comment: user de app
+        uid: : 500
+    - name: Instalacao do Maven
+      apt:
+        name: maven
+        state: latest
+    - name: Instalacao do Java
+      apt:
+        name: java-1.8.0-openjtk
+        state: latest
+    - name: Criacao do diretorio de app
+      file:
+        path: /opt/notes
+        state: directory
+        owner: app
+        group: app
+    - name: Clone do repo Notes - app
+      git:
+        repo: 'https://github.com/callicoder/spring-boot-mysql-rest-api-tutorial.git'
+        dest: /opt/notes
+        clone: yes
+        force: yes
+    - name: Configurar arquivo de propriedades para camada de bancos de dados
+      template:
+        src: applicaton.properties
+        dest: /opt/notes/src/main/resources/application.properties
+    - name: Gerar pacotes da app
+        command: mvn -f /opt/notes.pom.xml package
+        become_user: app
