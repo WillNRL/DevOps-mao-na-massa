@@ -24,7 +24,7 @@
       user:
         name: app
         comment: user de app
-        uid: : 500
+        uid: 500
     - name: Instalacao do Maven
       apt:
         name: maven
@@ -39,6 +39,10 @@
         state: directory
         owner: app
         group: app
+    - name: Instalacao do git client
+      apt:
+        name: git
+        state: latest
     - name: Clone do repo Notes - app
       git:
         repo: 'https://github.com/callicoder/spring-boot-mysql-rest-api-tutorial.git'
@@ -50,5 +54,33 @@
         src: applicaton.properties
         dest: /opt/notes/src/main/resources/application.properties
     - name: Gerar pacotes da app
-        command: mvn -f /opt/notes.pom.xml package
-        become_user: app
+      command: /opt/apache-maven-3.1.0/bin/mvn -f /opt/notes/pom.xml package
+      become_user: app
+    - name: Register versao atual do pacote
+      shell:
+        cmd: /opt/apache-maven-3.1.0/bin/mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\['
+        chdir: /opt/notes/
+      register: app_version
+    - name: Configurar serviço do Systemd
+      template:
+        src: etc/systemd/system/notes.service
+        dest: etc/systemd/system/notes.service
+        owner: root
+        group: root
+        mode: '0600'
+        notify: reload daemon
+    - name: iniciar serviço notes
+      service:
+        name: notes
+        status: restarted
+  roles:
+      - configuracao-default-so
+  handlers:
+    - name: reload app
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: 'notes'
+    - name: reload daemon
+      systemd:
+        daemon_reexec: yes
