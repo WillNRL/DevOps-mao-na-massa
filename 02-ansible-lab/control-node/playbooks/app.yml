@@ -1,5 +1,5 @@
---- 
-- name: Configurar servidor de appp Java
+---
+- name: Configurar servidor de aplicação Java
   hosts: app01
 
   user: vagrant
@@ -8,55 +8,55 @@
   vars:
     - dbhost: "db01"
     - dbname: "notes"
-    - dbusername: "notesapps"
+    - dbusername: "notesapp"
     - dbpassword: "devopsmaonamassa"
   tasks:
-    - name: Configurar hosts lab ansible
-      lineinfile: 
-          dest: /etc/hosts
-          state: present
-          line: "{{item}}"
-      with_items:
-        - 192.168.1.2 control-node
-        - 192.168.1.3 app01
-        - 192.168.1.4 db01
-    - name: Add user de app
+    - name: Adicionar usuario de app
       user:
         name: app
-        comment: user de app
+        comment: Usuario de aplicação
         uid: 500
-    - name: Instalacao do Maven
+    - name: Donwload do maven 
+      get_url:
+        url: https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.1.0/apache-maven-3.1.0-bin.tar.gz
+        dest: /opt/apache-maven-3.1.0-bin.tar.gz
+    - name: Unzip do pacote maven
+      ansible.builtin.unarchive:
+        src: /opt/apache-maven-3.1.0-bin.tar.gz
+        dest: /opt/
+        remote_src: yes
+    - name: Instalação do Java
       apt:
-        name: maven
+        name: java-1.8.0-openjdk
         state: latest
-    - name: Instalacao do Java
-      apt:
-        name: java-1.8.0-openjtk
-        state: latest
-    - name: Criacao do diretorio de app
+    - name: Criação do diretório de app
       file:
         path: /opt/notes
         state: directory
         owner: app
         group: app
-    - name: Instalacao do git client
+    - name: instalacao do git client
       apt:
         name: git
         state: latest
-    - name: Clone do repo Notes - app
+    - name: Clone do repositório Notes - app
       git:
         repo: 'https://github.com/callicoder/spring-boot-mysql-rest-api-tutorial.git'
         dest: /opt/notes
         clone: yes
         force: yes
-    - name: Configurar arquivo de propriedades para camada de bancos de dados
+    - name: Configurar arquivo pom.xml com repositorios maven central
       template:
-        src: applicaton.properties
+        src: pom.xml
+        dest: /opt/notes/pom.xml
+    - name: Configurar arquivo de propriedades para camada de banco de dados
+      template:
+        src: application.properties
         dest: /opt/notes/src/main/resources/application.properties
-    - name: Gerar pacotes da app
+    - name: Gerar pacote da aplicação
       command: /opt/apache-maven-3.1.0/bin/mvn -f /opt/notes/pom.xml package
       become_user: app
-    - name: Register versao atual do pacote
+    - name: Registrar versao atual do pacote
       shell:
         cmd: /opt/apache-maven-3.1.0/bin/mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\['
         chdir: /opt/notes/
@@ -64,22 +64,22 @@
     - name: Configurar serviço do Systemd
       template:
         src: etc/systemd/system/notes.service
-        dest: etc/systemd/system/notes.service
+        dest: /etc/systemd/system/notes.service
         owner: root
         group: root
         mode: '0600'
-        notify: reload daemon
-    - name: iniciar serviço notes
+      notify: reload daemon
+    - name: Iniciar serviço notes
       service:
         name: notes
-        status: restarted
+        state: restarted
   roles:
       - configuracao-default-so
   handlers:
     - name: reload app
       systemd:
         state: restarted
-        daemon_reload: yes
+        daemon_reload: yes 
         name: 'notes'
     - name: reload daemon
       systemd:
