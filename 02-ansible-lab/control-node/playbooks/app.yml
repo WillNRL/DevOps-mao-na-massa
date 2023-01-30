@@ -1,6 +1,5 @@
 ---
 - name: Configurar servidor de aplicação Java
-  hosts: app01
 
   user: vagrant
   become: yes
