@@ -1,5 +1,6 @@
 ---
 - name: Configurar servidor de aplicação Java
+  hosts: app01
 
   user: vagrant
   become: yes
@@ -10,11 +11,29 @@
     - dbusername: "notesapp"
     - dbpassword: "devopsmaonamassa"
   tasks:
+    - name: Atualizar o sistema operacional
+      package:
+        name: "*"
+        state: latest
+      tags:
+        - upgrade
     - name: Adicionar usuario de app
       user:
         name: app
         comment: Usuario de aplicação
         uid: 500
+    - name: Donwload do Java SE Development Kit 17.0.6n 
+      get_url:
+        url: https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
+        dest: /opt/jdk-17_linux-x64_bin.deb
+    - name: Instalar dependências dpkg
+      apt:
+        name: dpkg
+        state: latest
+    - name: Instalar pacote deb
+      apt:
+        deb: /opt/jdk-17_linux-x64_bin.deb
+        state: present
     - name: Donwload do maven 
       get_url:
         url: https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.1.0/apache-maven-3.1.0-bin.tar.gz
@@ -24,10 +43,7 @@
         src: /opt/apache-maven-3.1.0-bin.tar.gz
         dest: /opt/
         remote_src: yes
-    - name: Instalação do Java
-      apt:
-        name: java-1.8.0-openjdk
-        state: latest
+
     - name: Criação do diretório de app
       file:
         path: /opt/notes
@@ -35,7 +51,7 @@
         owner: app
         group: app
     - name: instalacao do git client
-      apt:
+      package:
         name: git
         state: latest
     - name: Clone do repositório Notes - app
