@@ -60,11 +60,11 @@
         dest: /opt/notes
         clone: yes
         force: yes
-    # - name: Configurar arquivo pom.xml com repositorios maven central
-    #   template:
-    #     src: pom.xml
-    #     dest: /opt/notes/pom.xml
-    #     remote_src: yes
+    - name: Configurar arquivo pom.xml com repositorios maven central
+      template:
+        src: /vagrant/playbooks/pom.xml
+        dest: /opt/notes/pom.xml
+        remote_src: yes
     - name: Configurar arquivo de propriedades para camada de banco de dados
       template:
         src: application.properties
