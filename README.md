@@ -1,4 +1,8 @@
-# DevOps-mao-na-massa
+# DevOps-mao-na-massa - Ainda está incompleto
+
+### Esclarencendo o reporsitorio.
+
+##### O repo foi feito para fazer atualização do lab do curso devops-mao-na-massa, que já está desatulizado e ter sempre oportunidade de fazer atulização de labs, é otimo para aprender sobre infra-agil.
 
 #### link da app
 
