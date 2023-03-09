@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+vms = {
+    'control-node' => {'ip' => '2', 'provision' => 'node.sh'},
+    'app01' => {'ip' => '3','provision' => 'app.sh', 'port' => 8080},
+    'db01' => {'ip' => '4', 'provision' => 'db.sh', 'port' => 3603}
+}
+Vagrant.configure('2') do |config|
+    config.vm.box_check_update = false
+  
+    vms.each do |name, conf|
+      config.vm.define "#{name}" do |k|
+        k.vm.box = "debian/bullseye64"
+        k.vm.hostname = "#{name}.example.com"
+        k.vm.network 'private_network', ip: "172.27.11.#{conf['ip']}"
+        if name == 'app01' or 'db01'
+            k.vm.network "forwarded_port", guest: "#{conf['port']}", host: "#{conf['port']}"
+        end
+        k.vm.provider 'vmware' do |vw|
+          vw.synced_folder "$(pwd)", "/vagrant"
+        end
+        k.vm.provision 'shell', path: "provision/#{conf['provision']}", args: "#{conf['ip']}"
+      end
+    end
+end
