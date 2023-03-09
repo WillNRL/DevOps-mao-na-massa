@@ -2,10 +2,11 @@
 # vi: set ft=ruby :
 vms = {
     'control-node' => {'ip' => '2', 'provision' => 'node.sh'},
-    'app01' => {'ip' => '3','provision' => 'app.sh', 'port' => 8080},
-    'db01' => {'ip' => '4', 'provision' => 'db.sh', 'port' => 3603}
+    'app01' => {'ip' => '3','provision' => 'app.sh'},
+    'db01' => {'ip' => '4', 'provision' => 'db.sh'}
 }
 Vagrant.configure('2') do |config|
+
     config.vm.box_check_update = false
   
     vms.each do |name, conf|
@@ -13,12 +14,12 @@ Vagrant.configure('2') do |config|
         k.vm.box = "debian/bullseye64"
         k.vm.hostname = "#{name}.example.com"
         k.vm.network 'private_network', ip: "172.27.11.#{conf['ip']}"
-        if name == 'app01' or 'db01'
-            k.vm.network "forwarded_port", guest: "#{conf['port']}", host: "#{conf['port']}"
+        if name == 'app01'
+          k.vm.network "forwarded_port", guest: 8080, host: 8080
+        elsif name == 'db01'
+          k.vm.network "forwarded_port", guest: 3603, host: 3603
         end
-        k.vm.provider 'vmware' do |vw|
-          vw.synced_folder "$(pwd)", "/vagrant"
-        end
+        k.vm.synced_folder "/home/will/Desktop/DevOps-mao-na-massa/02-ansble-lab", "/vagrant"
         k.vm.provision 'shell', path: "provision/#{conf['provision']}", args: "#{conf['ip']}"
       end
     end
